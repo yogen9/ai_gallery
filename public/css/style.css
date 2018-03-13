@@ -1,0 +1,51 @@
+#faces{
+    height: 150px; 
+    width: 100%;
+    margin: 10px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
+    overflow-x: auto;
+}
+#search{
+    width: 100%;
+    margin: 10px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
+}
+#pics{
+    width: 100%;
+    margin: 10px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
+    overflow: auto;
+    
+}
+.img {
+    margin: 10px 10px 10px 10px;
+    position: relative;
+    float: left;
+    width: 200px;
+    height: 200px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+* {
+    box-sizing: border-box;
+}
+form {
+    float: right;
+}
+#searchBar{
+    width: 50%;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 20px;
+    background-color: white;
+    background-image: url('https://www.w3schools.com/howto/searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 5px 20px 5px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+

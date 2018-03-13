@@ -24,6 +24,13 @@ var rekognition = new AWS.Rekognition({
 
 mongo.connect("mongodb://localhost/aigallery");
 
+var labelSchema = new mongo.Schema({
+    label: String,
+    ImageKeys: [{
+        type: String,
+    }]
+});
+var label = mongo.model("label", labelSchema);
 //====================================================================
 
 app.listen(4000, function () {
@@ -31,30 +38,39 @@ app.listen(4000, function () {
 });
 
 app.get("/", (req, res) => {
-    var params = {
+    var params0 = {
         Bucket: "yogen1",
     };
-    s3.listObjects(params, function (err, data) {
-        if (err) { // an error occurred
+    s3.listObjects(params0, function (err, data) {
+        if (err) {
             console.log(err, err.stack);
         } else {
-            console.log(data);
-            var keysObj = {
-                keys: []
+            // console.log(data);
+            var ImageKeysObj = {
+                ImageKeys: []
             }
             data.Contents.forEach(obj => {
-                keysObj.keys.push(obj.Key);
+                ImageKeysObj.ImageKeys.push(obj.Key);
             });
-            console.log(keysObj);
+            //console.log(ImageKeysObj);
             res.render("home", {
-                keysObj: keysObj
+                ImageKeysObj: ImageKeysObj
             });
         }
     });
-    
+
+    var params1 = {
+        CollectionId: "myphotos",
+        MaxResults: 20
+    };
+    rekognition.listFaces(params1, function (err, data) {
+        if (err) console.log(err, err.stack);
+        else console.log(data);
+    })
 });
 
 app.post("/", function (req, res) {
+    //uploading image to s3 bucket
     var params = {
         Body: req.files.img.data,
         Key: req.files.img.name,
@@ -64,8 +80,9 @@ app.post("/", function (req, res) {
     s3.putObject(params, (err, data) => {
         if (err)
             console.log(err, err.stack);
-        else
-            console.log(data);
+        else {
+             console.log(data);
+        }
         var par = {
             Image: {
                 S3Object: {
@@ -75,11 +92,79 @@ app.post("/", function (req, res) {
             },
             MinConfidence: 70
         };
+
+        //detection of object and assing tags 
         rekognition.detectLabels(par, function (err, data) {
+            if (err) {
+                console.log(err, err.stack);
+            } else {
+                console.log(data);
+                // if tag is new .. it is created in db .. othewise push key into existing tag entry
+                data.Labels.forEach(obj => {
+                    label.findOne({
+                        label:  obj.Name.toLowerCase()
+                    }, function (err, foundLabel) {
+                        //console.log(err); // always return null .. not important
+                        console.log(foundLabel); // return array...
+                        if (foundLabel == null) {
+                            //console.log("Err");
+                            label.create({
+                                label: obj.Name.toLowerCase(),
+                                ImageKeys: req.files.img.name
+                            }, (err, retunCreatedObj) => { /* console.log(err); */ });
+                        } else {
+                            //console.log("found");
+                            foundLabel.ImageKeys.push(req.files.img.name)
+                            foundLabel.save((err, updatedObj) => {});
+                        }
+                    });
+                });
+            }
+        });
+
+        // index face and store into collection 
+        var params = {
+            CollectionId: "myphotos",
+            DetectionAttributes: ["ALL"],
+            ExternalImageId: req.files.img.name,
+            Image: {
+                S3Object: {
+                    Bucket: "yogen1",
+                    Name: req.files.img.name
+                }
+            }
+        };
+        rekognition.indexFaces(params, function (err, data) {
             if (err) console.log(err, err.stack);
-            else console.log(data);
+            else{ 
+                console.log(data);
+                //Gender And Emotion Label Entries
+                if (data.FaceRecords.length>0) {
+                    console.log(data.FaceRecords[0].FaceDetail);                    
+                    data.FaceRecords.forEach(face => {
+                        label.findOne({label:face.FaceDetail.Gender.Value.toLowerCase()},function(err,GenderLabel) {
+                            GenderLabel.ImageKeys.push(req.files.img.name);
+                            GenderLabel.save((err, updatedObj) => { });
+                        });
+                        face.FaceDetail.Emotions.forEach(emotion => {
+                            if(emotion.Confidence>80){
+                                label.findOne({label:emotion.Type.toLowerCase()},function(err,EmotionLabel) {
+                                    EmotionLabel.ImageKeys.push(req.files.img.name);
+                                    EmotionLabel.save((err, updatedObj) => { });
+                                });
+                            }
+                        });
+                    });
+                }
+            }
         });
     });
+    res.redirect("/");
+});
 
-
+app.get("/search/:string",(req,res)=>{
+    console.log(req.params.string);
+    label.findOne({label:req.params.string},(err,output)=>{
+        res.json(output); 
+    });
 });

@@ -8,35 +8,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
-    <script src="http://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/style.css">
     <script src="../js/script.js"></script>
 </head>
 
 <body>
     <div class="row">
-        <div id="faces" class="row">
+        <div id="faces">
 
         </div>
-        <div id="search" class="row">
 
+        <div id="search">
+            <input id="searchBar" type="text" name="search"  onkeyup="searchEvent(event)" placeholder="Search..">
+            <form class="form-inline" action="/" method="POST" encType="multipart/form-data">
+                <div class="form-group">
+                    <input id="upload" type="file" name="img" required>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Submit">
+            </form>
+            <div id="res"></div>
         </div>
-        <div id="pics" class="row">
 
+        <div id="pics">
+            <% ImageKeysObj.ImageKeys.forEach(function(key){ %>
+                <div class="img-container">
+                    <div class="img" style="background-image:url('https://s3.us-east-2.amazonaws.com/yogen1/<%=key%>');"></div>
+                </div>
+                <% });%>
         </div>
     </div>
-    <form action="/" method="POST" encType="multipart/form-data">
-        <div class="form-group">
-            <input id="upload" type="file" name="img" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    <% keysObj.keys.forEach(function(key){ %>
-        <img class="img-thumbnail" width="50px" height="50px" src="https://s3.ap-south-1.amazonaws.com/yogen/<%=key%>" alt="nothing">
-    <% })%>
 
+
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
