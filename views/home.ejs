@@ -19,7 +19,7 @@
         </div>
 
         <div id="search">
-            <input id="searchBar" type="text" name="search"  onkeyup="searchEvent(event)" placeholder="Search..">
+            <input id="searchBar" type="text" name="search" onkeyup="searchEvent(event)" placeholder="Search.. (Eg. Tree,Animal...)">
             <form class="form-inline" action="/" method="POST" encType="multipart/form-data">
                 <div class="form-group">
                     <input id="upload" type="file" name="img" required>
@@ -32,7 +32,9 @@
         <div id="pics">
             <% ImageKeysObj.ImageKeys.forEach(function(key){ %>
                 <div class="img-container">
-                    <div class="img" style="background-image:url('https://s3.us-east-2.amazonaws.com/yogen1/<%=key%>');"></div>
+                    <a href="http://localhost:4000/similar/<%=key%>">
+                        <div class="img" style="background-image:url('https://s3.us-east-2.amazonaws.com/yogen1/<%=key%>');"></div>
+                    </a>
                 </div>
                 <% });%>
         </div>

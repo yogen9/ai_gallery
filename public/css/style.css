@@ -1,22 +1,24 @@
-#faces{
-    height: 150px; 
+#faces {
+    height: 150px;
     width: 100%;
     margin: 10px 10px 10px 10px;
     padding: 10px 10px 10px 10px;
     overflow-x: auto;
 }
-#search{
+
+#search {
     width: 100%;
     margin: 10px 10px 10px 10px;
     padding: 10px 10px 10px 10px;
 }
-#pics{
+
+#pics {
     width: 100%;
     margin: 10px 10px 10px 10px;
     padding: 10px 10px 10px 10px;
     overflow: auto;
-    
 }
+
 .img {
     margin: 10px 10px 10px 10px;
     position: relative;
@@ -27,13 +29,16 @@
     background-repeat: no-repeat;
     background-size: cover;
 }
+
 * {
     box-sizing: border-box;
 }
+
 form {
     float: right;
 }
-#searchBar{
+
+#searchBar {
     width: 50%;
     box-sizing: border-box;
     border: 2px solid #ccc;
@@ -47,5 +52,3 @@ form {
     -webkit-transition: width 0.4s ease-in-out;
     transition: width 0.4s ease-in-out;
 }
-
-

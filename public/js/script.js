@@ -1,6 +1,5 @@
 function searchEvent(e) {
     console.log(e.keyCode);
-
     if (e.keyCode == 13) {
         var searchString = document.getElementById("searchBar").value.toLowerCase();
         console.log(searchString);
@@ -19,6 +18,5 @@ function searchEvent(e) {
         };
         xhttp.open("GET", "http://localhost:4000/search/" + searchString, true);
         xhttp.send();
-    
     }
 }

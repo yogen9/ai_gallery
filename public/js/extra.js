@@ -235,7 +235,14 @@ rekognition.detectFaces(params, function (err, data) {
 //     Confidence: 99.99935913085938
 // }
 
-
+var params1 = {
+    CollectionId: "myphotos",
+    MaxResults: 20
+};
+rekognition.listFaces(params1, function (err, data) {
+    if (err) console.log(err, err.stack);
+    else console.log(data);
+})
 // collection face object
 // {
 //     Faces:
@@ -279,3 +286,50 @@ rekognition.detectFaces(params, function (err, data) {
 //     }],
 //         FaceModelVersion: '2.0'
 // }
+
+app.get("/similar/:imageKey", (req, res) => { // not worked when no face
+    // var params = {
+    //     CollectionId: "myphotos",
+    //     FaceMatchThreshold: 85,
+    //     Image: {
+    //         S3Object: {
+    //             Bucket: "yogen1",
+    //             Name: req.params.imageKey
+    //         }
+    //     },
+    // };
+    // rekognition.searchFacesByImage(params, (err, data) => {
+    //     if (err) {
+    //         console.log(err, err.stack);
+    //         res.redirect("/");
+    //     } else {
+    //         console.log(data.FaceMatches);
+    //         res.redirect("/");
+    //     }
+    // });
+    var AllFaces = [];
+    ImageFaces.findOne({ Key: req.params.imageKey }, (err, returnedFaceIds) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(returnedFaceIds);
+            returnedFaceIds.FaceID.forEach((face) => {
+                var params = {
+                    CollectionId: "myphotos",
+                    FaceId: face,
+                    FaceMatchThreshold: 80,
+                };
+                rekognition.searchFaces(params, function (err, similarFaces) {
+                    if (err) console.log(err, err.stack);
+                    else {
+                        console.log(similarFaces.FaceMatches);
+                        similarFaces.FaceMatches.forEach((face) => {
+                            AllFaces.push(face.Face.ExternalImageId);
+                        });
+                    }
+                });
+            })
+        }
+    });
+
+});
